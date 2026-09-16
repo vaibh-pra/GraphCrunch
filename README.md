@@ -38,20 +38,31 @@ The implementation is checked against it by brute force, see
 
 ## Benchmarks
 
-Disease Ontology, on a 12th Gen Intel Core i5-1235U, single run, same binary on
-both sides.
+Disease Ontology, on a 12th Gen Intel Core i5-1235U. Both rows are whole-process
+wall clock and peak resident memory, measured with `/usr/bin/time` on the same
+binary, so each includes reading the graph, solving, and writing the answer.
 
-| | vertices | edges | wall time |
+| | solves a graph of | wall time | peak memory |
 |---|---|---|---|
-| nauty on the raw graph | 12,282 | 17,376 | 265.24 s |
-| GraphCrunch, contract + solve + lift | 5,884 (47.9%) | 8,491 | **0.10 s** |
+| nauty on the raw graph | 12,282 v / 17,376 e | 276.52 s | 326 MB |
+| GraphCrunch, contract + solve + lift | 5,884 v / 8,491 e | **0.17 s** | **37 MB** |
 
-Both produce **5,675 orbits** and the partitions are **identical**, which
-`--raw` asserts rather than assumes. That is a **2,700x** speedup on this graph.
+Both produce **5,675 orbits** and the partitions are **identical**, which `--raw`
+asserts rather than assumes. That is roughly a **1,600x** speedup and a **9x**
+reduction in memory on this graph.
+
+> The tool's own progress line reports contraction plus solver time only, so it
+> prints a smaller number than the end-to-end figures above. Quote the wall clock,
+> not the progress line.
 
 The gain tracks how much the graph contracts, not how large it is. A graph with no
-twins contracts to itself and GraphCrunch costs one extra linear pass. Measure
-your own graph with `--raw` before quoting a number.
+twins contracts to itself and GraphCrunch costs one extra linear pass. WordNet
+(wn18rr) keeps 86.5% of its vertices under contraction and gains almost nothing.
+Measure your own graph with `--raw` before quoting a number.
+
+Inputs here are ontology and knowledge-graph edge lists. Their relations are
+directed at source, and GraphCrunch symmetrises them into simple undirected
+graphs, which is what the orbits are computed on.
 
 ## Installation
 
