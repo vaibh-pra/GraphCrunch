@@ -1,0 +1,11 @@
+automorph_serial_col
+nauty
+nauty2_*/
+nauty2_*.tar.gz
+*.o
+*.a
+__pycache__/
+*.pyc
+.orb_*.json
+_quot.*
+_raw.*

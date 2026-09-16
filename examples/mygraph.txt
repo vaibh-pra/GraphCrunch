@@ -1,0 +1,16 @@
+# Two triangles joined by a bridge, with pendant twins on the bridge ends.
+# Whitespace or tab separated, one edge per line, arbitrary vertex names.
+# Lines whose first field starts with # are ignored.
+a1	a2
+a2	a3
+a3	a1
+b1	b2
+b2	b3
+b3	b1
+a1	b1
+a1	p1
+a1	p2
+a1	p3
+b1	q1
+b1	q2
+b1	q3

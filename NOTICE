@@ -1,0 +1,21 @@
+GraphCrunch
+Copyright (c) 2026 Vaibhav N. Prakash
+Licensed under the MIT License. See LICENSE.
+
+This project depends on, but does not bundle, nauty and Traces.
+
+    nauty and Traces
+    Copyright (c) Brendan D. McKay (1984-) and Adolfo Piperno (2008-)
+    Licensed under the Apache License, Version 2.0
+    https://pallini.di.uniroma1.it/
+
+scripts/get_nauty.sh downloads nauty from its official distribution points and
+builds it locally. No nauty source is redistributed here. src/automorph_serial_col.c
+is original work that includes nauty's public headers and links against its
+library, in the manner nauty is intended to be used.
+
+If you use GraphCrunch in published work, cite nauty as well. The canonical
+reference is
+
+    B. D. McKay and A. Piperno, Practical graph isomorphism, II,
+    Journal of Symbolic Computation 60 (2014), 94-112.
