@@ -29,7 +29,12 @@ automorphism group of the original graph a semidirect product `K ⋊ A`, where `
 is the direct product of the symmetric groups on the twin classes and `A` is the
 colour-preserving automorphism group of the quotient. Vertex orbits and edge
 orbits of the original graph are recovered from the orbits of `A` with no loss.
-See [Correctness](#correctness).
+
+The proof is in the accompanying preprint, *A Short Proof of Twin-Quotient
+Decomposition and Orbit Lifting*
+([doi:10.20944/preprints202609.1249.v1](https://doi.org/10.20944/preprints202609.1249.v1)).
+The implementation is checked against it by brute force, see
+[Correctness](#correctness).
 
 ## Benchmarks
 
@@ -172,11 +177,13 @@ GraphCrunch/
 If you use GraphCrunch in published work, please cite both the method and nauty.
 
 ```bibtex
-@misc{prakash_graphcrunch,
-  author = {Prakash, Vaibhav N.},
-  title  = {Twin Contraction and Exact Lifting of Vertex and Edge Orbits},
-  year   = {2026},
-  note   = {Software: GraphCrunch}
+@article{prakash2026twin,
+  author    = {Prakash, Vaibhav},
+  title     = {A Short Proof of Twin-Quotient Decomposition and Orbit Lifting},
+  year      = {2026},
+  publisher = {Preprints.org},
+  doi       = {10.20944/preprints202609.1249.v1},
+  url       = {https://doi.org/10.20944/preprints202609.1249.v1}
 }
 
 @article{mckay2014practical,
