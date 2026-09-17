@@ -103,10 +103,11 @@ def call(binary, el, colour, out):
     t0 = time.time()
     r = subprocess.run([str(binary), str(el)] + ([str(colour)] if colour else [""])
                        + [str(out)], capture_output=True, text=True)
-    dt = time.time() - t0
     if r.returncode != 0:
         raise RuntimeError((r.stderr or r.stdout)[:300])
-    return parse(Path(out).read_text()), dt
+    orbits = parse(Path(out).read_text())
+    dt = time.time() - t0          # includes parsing the solver's output
+    return orbits, dt
 
 def parse(txt):
     lines = txt.splitlines()
@@ -214,15 +215,19 @@ def _structure(n, adj, ue, binary, work, cache):
 
     qorb, qt = call(binary, work / "_quot.el", work / "_quot.col",
                     work / "_quot.out")
-    qeorb = parse_edges((work / "_quot.out").read_text())
 
+    t1 = time.time()
+    qeorb = parse_edges((work / "_quot.out").read_text())
     vlift = [sorted(v for i in g for v in cls[i]) for g in qorb]
     elift = lift_edge_orbits(cls, clq, qorb, qeorb)
+    tl = time.time() - t1          # parsing the edge classes and lifting both sides
+
+    ttot = time.time() - t0        # the whole of structure(), nothing excluded
     how = (f"twin-contracted quotient ({m}/{n} vertices, {100*m/n:.1f}%, "
            f"{len(qe)} edges, {len(cmap)} colours, {sum(clq)} true-twin classes), "
-           f"contract {tc:.2f}s + solver {qt:.2f}s")
-    st = dict(m=m, tc=tc, qt=qt, qe=len(qe), n_clique=sum(clq),
-              qeorb=len(qeorb))
+           f"contract {tc:.2f}s + solver {qt:.2f}s + lift {tl:.2f}s = {ttot:.2f}s")
+    st = dict(m=m, tc=tc, qt=qt, tl=tl, ttot=ttot, qe=len(qe),
+              n_clique=sum(clq), qeorb=len(qeorb))
     if cache is not None:
         Path(cache).write_text(json.dumps(
             {"v": vlift, "e": [[list(e) for e in g] for g in elift],
@@ -231,6 +236,7 @@ def _structure(n, adj, ue, binary, work, cache):
 
 
 def main():
+    t_start = time.time()
     ap = argparse.ArgumentParser()
     ap.add_argument("--edges", required=True)
     ap.add_argument("--out", default="orbits_serial.txt",
@@ -257,10 +263,12 @@ def main():
     print(f"contraction: {n} -> {st['m']} vertices ({100*st['m']/n:.1f}%), "
           f"{st['qe']} edges, {st['n_clique']} true-twin classes, {st['tc']:.2f}s")
     print(f"automorph_serial_col on quotient: {st['qt']:.2f}s")
+    print(f"lift: {st.get('tl', float('nan')):.2f}s")
     nt = [o for o in lifted if len(o) > 1]
     cov = sum(len(o) for o in nt) / n
     print(f"lifted: {len(lifted)} orbits, {len(nt)} non-trivial, "
-          f"coverage {100*cov:.2f}%   total {st['tc']+st['qt']:.2f}s")
+          f"coverage {100*cov:.2f}%   "
+          f"contract+solve+lift {st.get('ttot', st['tc'] + st['qt']):.2f}s")
     qeorb = st['qeorb']
     covered = set()
     for g in eo: covered.update(g)
@@ -298,6 +306,8 @@ def main():
         with open(a.out, "w") as f:
             emit(f)
         print(f"wrote {a.out}")
+    print(f"END TO END (read + contract + solve + lift + write): "
+          f"{time.time() - t_start:.2f}s")
 
 if __name__ == "__main__":
     main()

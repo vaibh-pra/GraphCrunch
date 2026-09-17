@@ -51,9 +51,11 @@ Both produce **5,675 orbits** and the partitions are **identical**, which `--raw
 asserts rather than assumes. That is roughly a **1,600x** speedup and a **9x**
 reduction in memory on this graph.
 
-> The tool's own progress line reports contraction plus solver time only, so it
-> prints a smaller number than the end-to-end figures above. Quote the wall clock,
-> not the progress line.
+The tool reports its own timings and they reconcile with the table. On the run
+above it prints `contract+solve+lift 0.10s` and then
+`END TO END (read + contract + solve + lift + write): 0.14s`. The remaining gap to
+the 0.17 s measured externally is Python interpreter startup, which the process
+cannot time from inside itself.
 
 The gain tracks how much the graph contracts, not how large it is. A graph with no
 twins contracts to itself and GraphCrunch costs one extra linear pass. WordNet
